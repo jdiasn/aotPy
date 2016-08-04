@@ -1,46 +1,52 @@
-#!/usr/local/bin/python
-
-
 #this file is used to set path to use at input and output data
+from os import environ
 
-inputDataPath='/Users/josedias/Documents/aotData'
-outputDataPath='/Users/josedias/Documents/aotOutData'
+homePath = environ['HOME']
 
-def nppPath():
+dataPath = homePath + '/aotData'
+inputDataPath = dataPath + '/inputData'
+outputDataPath = dataPath + '/outputData'
 
-	inputNppDataPath=inputDataPath+'/npp'
-	outputNppDataPath=outputDataPath
-	return inputNppDataPath, outputNppDataPath
+#------------------------------------------------------------
+#
+def aotGridded():
+        
+        griddedDataPath = dataPath + '/aotGridded'
 
-def edrNppPath():
+        return griddedDataPath
 
-	inputNppDataPath=inputDataPath+'/npp/edr'
-	outputNppDataPath=outputDataPath
-	return inputNppDataPath, outputNppDataPath
 
-def edrNppPathNasa():
+#------------------------------------------------------------
+#
+def edrNppNasaPath():
 
-	inputNppDataPath=inputDataPath+'/npp/edrNasaAsc'
-	outputNppDataPath=outputDataPath
+	inputNppDataPath = inputDataPath + '/npp/edrDataNasa'
+	outputNppDataPath = outputDataPath + '/npp/edrDataNasa'
+
 	return inputNppDataPath, outputNppDataPath
 
 def edrCsppPath():
 
-	inputNppDataPath=inputDataPath+'/npp/edrCsppAsc'
-	outputNppDataPath=outputDataPath
+	inputNppDataPath = inputDataPath + '/npp/edrCsppAsc'
+	outputNppDataPath = outputDataPath +  '/npp/edrCsppAsc'
+
 	return inputNppDataPath, outputNppDataPath
+
+
+#------------------------------------------------------------
+#
+def aotModis3k():
+
+        inputNppDataPath = inputDataPath + '/modis/3km' 
+        outputNppDataPath = outputDataPath + '/modis/3km'
+
+        return inputNppDataPath, outputNppDataPath
 
 def aeronetPath():
 
-	inputAeronetDataPath=inputDataPath+'/aeronet'
-	outputAeronetDataPath=outputDataPath
+	inputAeronetDataPath = inputDataPath + '/aeronet'
+	outputAeronetDataPath = outputDataPat + '/aeronet'
+
 	return inputAeronetDataPath, outputAeronetDataPath
-
-
-def aquaPath():
-
-	inputAquaDataPath=inputDataPath+'/aqua'
-	outputAquaDataPath=outputDataPath
-	return inputAquaDataPath, outputAquaDataPath
 
 
