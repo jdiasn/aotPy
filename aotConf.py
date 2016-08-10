@@ -6,6 +6,8 @@ homePath = environ['HOME']
 dataPath = homePath + '/aotData'
 inputDataPath = dataPath + '/inputData'
 outputDataPath = dataPath + '/outputData'
+#outputDataPath = '/state/partition1' + '/outputData'
+
 
 #------------------------------------------------------------
 #
