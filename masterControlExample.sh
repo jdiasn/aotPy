@@ -8,16 +8,15 @@ for year in ${year[@]}
 do
 
 echo $lev
+#        ./aotPy/control.sh $year $lev
+#	./aotPy/control2.sh $year $lev
 
-#        ./control.sh $year $lev
-#	./control2.sh $year $lev
+ #       ./aotPy/controlNppEdr.sh $year $lev
+ #       ./aotPy/controlNppEdr2.sh $year $lev
 
- #       ./controlNppEdr.sh $year $lev
- #       ./controlNppEdr2.sh $year $lev
+ #       ./aotPy/makeTimeList.py $year aqua_nasa
+ #       ./aotPy/makeTimeList.py $year edrNppNasa
 
- #       ./makeTimeList.py $year aqua_nasa
- #       ./makeTimeList.py $year edrNppNasa
-
-        ./aeronetDataLev15.py $year aqua_nasa $lev
-        ./aeronetDataLev15.py $year edrNppNasa $lev
+        ./aotPy/aeronetDataLev15.py $year aqua_nasa $lev
+        ./aotPy/aeronetDataLev15.py $year edrNppNasa $lev
 done
