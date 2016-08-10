@@ -5,9 +5,9 @@ echo 'Running extraction'
 
 #----Extract process 
 
-#/opt/openmpi/bin/mpiexec -n 12 -machinefile machines1 python aotModisAverage.py $year 
-/opt/openmpi/bin/mpiexec -n 12 -machinefile machines python aotModisAverage.py 2014 
-/opt/openmpi/bin/mpiexec -n 12 -machinefile machines python aotModisAverage.py 2015 
+#/opt/openmpi/bin/mpiexec -n 12 -machinefile machines1 python aotPy/aotModisAverage.py $year 
+/opt/openmpi/bin/mpiexec -n 12 -machinefile machines python aotPy/aotModisAverage.py 2014 
+/opt/openmpi/bin/mpiexec -n 12 -machinefile machines python aotPy/aotModisAverage.py 2015 
 
 #----Join extracted data
 python joinData.py 2014 aqua modis 3
