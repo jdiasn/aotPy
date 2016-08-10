@@ -5,5 +5,5 @@ lev=$2
 for month in ${months[@]}
 do
 #       echo 2014$month $month
-        ./aeroPyVirrsEdr.py $year$month $month $lev
+        ./aotPy/aeroPyVirrsEdr.py $year$month $month $lev
 done
