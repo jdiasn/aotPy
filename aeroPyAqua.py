@@ -1,13 +1,44 @@
-#!/usr/local/bin/python
-
+import pandas as pd
 import numpy as np
 import h5py as h5
+
 import gc
-import aotLib
-from colorama import Fore, Back, Style
-from aotConf import aquaPath
-from aotConf import aeronetPath
+from mpi4py import MPI
 from sys import argv
+from colorama import Fore, Back, Style
+
+import aotLib
+from aotConf import aeronetPath
+
+year = argv[1]
+satellite = argv[2]
+sensor = argv[3]
+resolution = argv[4]
+dataLev = argv[5]
+
+if sensor == 'modis' and int(resolution) == 3:
+
+    from aotConf import aotModis3k
+    inputSatPath, outputSatPath = aotModis3k()
+
+else 
+
+    from aotConf import aotModis
+    inputPath, outputSatPath = aotModis()
+
+
+def strRank(rank):
+
+        if rank < 9:
+                strRank = '0' + str(rank + 1)
+
+        else:
+                strRank = str(rank + 1)
+
+        return strRank
+
+
+
 
 def aotProcess(filePath,aotFile,julianDay,aeronetLat,aeronetLon):
 
@@ -73,24 +104,27 @@ def aotProcess(filePath,aotFile,julianDay,aeronetLat,aeronetLon):
 # main code
 #
 #---------------------------------
-#aqua path work
-#
-yearMonth=argv[1]
-#yearMonth='201401'
-inputAquaDataPath, outputAquaDataPath=aquaPath()
-#filePath=inputAquaDataPath+'/'+yearMonth+'/'
-#filePath=inputAquaDataPath+'/'+yearMonth+'Nasa'+'/'
-filePath=inputAquaDataPath+'/Nasa'+yearMonth+'/'
 
-processId=argv[2]
+comm = MPI.COMM_WORLD
 
-rec='nasa'
-satellite='aqua_'+rec
+size = comm.Get_size()
+rank = comm.Get_rank()
+
+try:
+
+	month = argv[6]
+
+except:
+
+	month = strRank(rank)
 
 
-
+print 'Extracting $s data, month %s from %s' % (satellite, month, str(size))
 #---------------------------------
-print filePath
+
+pathOut = outputSatPath
+filePath = inputSatPath
+
 
 #---------------------------------
 # geometric parameters
@@ -100,8 +134,6 @@ aeronetLatArr=[]
 aeronetLonArr=[]
 
 inputAeronetDataPath,outputAeronetDataPath=aeronetPath()
-
-dataLev = argv[3]
 
 if dataLev == 'lev20':
         filePathArr=aotLib.getAeronetPathArr(inputAeronetDataPath + '/allDataL2',dataLev)
@@ -119,7 +151,7 @@ nameStationArr,aeronetLatArr,aeronetLonArr=aotLib.returnAeronetCoordenateArr(fil
 #--------------------------------------
 # array variables
 #
-lenList=[]
+#lenList=[]
 aerosolFileList=[]
 timeArr=np.array([])
 aotMeanArr=np.array([])
@@ -137,46 +169,28 @@ nameStationAux=[]
 #--------------------------------------
 #
 
-lenPathList, aerosolFilePathList=aotLib.getAotAquaFileList(filePath)
+lenList, aotFileList=aotLib.getAotAquaFileList(filePath)
+aotFileList = sorted(aotFileList)
 
-#aerosolFilePathList=['/Users/josedias/Documents/aotData/aqua/Nasa201410/MYD04_L2.A2014279.1830.051.2014283080904.h5']
+beginDay, endDay = getMonthFirstAndLastDay(year,month)
 
-#for i in  range(len(aerosolFilePathList)):
-#	print aerosolFilePathList[i]
+aotFileList = getFileBetween2Days(beginDay, endDay, aotFileList)
 
 
-for aotFilePath in aerosolFilePathList:
+for aotFilePath in aotFileList:
 
 	print aotFilePath
 	fileName=aotFilePath.split('/')[-1]
 
+	idFileName=fileName.split('.')
 
-	if rec == 'dsa':
-		idFileName=fileName.split('.')[1]
-		#print idFileName
+	year=idFileName[1][1:5]
+	julianDay=idFileName[1][5:]
+	hour=idFileName[2][:2]
+	minute=idFileName[2][2:]
 
-		year='20'+idFileName[:2]
-		julianDay=idFileName[2:5]
-		hour=idFileName[5:7]
-		minute=idFileName[7:9]
-
-	else:
-	
-		idFileName=fileName.split('.')
-		#print idFileName
-
-		year=idFileName[1][1:5]
-		julianDay=idFileName[1][5:]
-		hour=idFileName[2][:2]
-		minute=idFileName[2][2:]
-
-	
 	decimalTime=aotLib.getDecimalTimeMinute(minute,hour)
 	time=float(julianDay)+round(decimalTime,5)
-
-	#print year, time
-#	print nameStationArr
-
 	
 	for nameStation in range(len(nameStationArr)):
 	
