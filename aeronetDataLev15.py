@@ -79,8 +79,8 @@ for filePath in range(len(filePathArr)):
 
 
 
-	aotLib.writeAeroData(pathOut,device,satellite,stationNameArr[filePath],year,newTimeArr,aotAeroMean,aotAeroStd,'500')
-	aotLib.writeAeroData(pathOut,device,satellite,stationNameArr[filePath],year,newTimeArr,aotAero550Mean,aotAero550Std,'550')
+	aotLib.writeAeroData(pathOut,device,satellite + resolution,stationNameArr[filePath],year,newTimeArr,aotAeroMean,aotAeroStd,'500')
+	aotLib.writeAeroData(pathOut,device,satellite + resolution,stationNameArr[filePath],year,newTimeArr,aotAero550Mean,aotAero550Std,'550')
 	aotAeroMean=np.array([])
 	aotAeroStd=np.array([])
 	newTimeArr=np.array([])
