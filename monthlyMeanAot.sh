@@ -24,4 +24,10 @@ echo 'Running extraction'
 #python joinData.py 2014 aqua modis 3
 #python joinData.py 2015 aqua modis 3
 
+#---Extract station AOT fron satellite passage
+#/opt/openmpi/bin/mpiexec -n 1 python aeroPyAqua.py 2014 aqua modis 10km lev15 01
+
+#---Join satellite data
+#python joinSatData.py 2014 01 aqua_nasa modis 10km
+
 echo 'Done' 

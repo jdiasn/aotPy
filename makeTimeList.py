@@ -1,19 +1,19 @@
-#!/usr/local/bin/python
 
 import numpy as np
-from aotConf import aeronetPath, nppPath
+from aotConf import aotGridded
 import h5py as h5
 from sys import argv
 
-inputAeronetDataPath,outputAeronetDataPath=aeronetPath()
-outputNppDataPath=nppPath()[1]
+h5DataPath = aotGridded()
+
 
 
 ##### creat time appended #####
-nppPath=outputNppDataPath+'/'+'aotDataSet.h5'
-nppData=h5.File(nppPath)
-year=argv[1]
-satellite=argv[2]
+dataSetPath = h5DataPath+'/'+'aotDataSet.h5'
+aotDataSet = h5.File(dataSetPath)
+year = argv[1]
+satellite = argv[2]
+resolution = argv[3]
 
 
 timeSatelliteArr=np.array([])
@@ -26,18 +26,21 @@ months=['01','02','03','04','05','06','07','08','09','10','11','12']
 
 for month in months:
     try:
-        timeSatelliteArr=np.array(nppData['/time/'+year+'/'+satellite+month])
+        timeSatelliteArr=np.array(aotDataSet['/time/'+year+'/'+satellite+resolution+'/'+satellite+resolution+month])
 	allTimeSatelliteArr=np.append(allTimeSatelliteArr,np.unique(timeSatelliteArr))
 
     except:
-        print 'without '+'/time/'+year+'/'+satellite+month
+        print 'without '+'/time/'+year+'/'+satellite+resolution+'/'+satellite+resolution+month
        
     #allTimeSatelliteArr=np.append(allTimeSatelliteArr,np.unique(timeSatelliteArr))
     
 try:
-    del nppData['time'+'/'+year+'/'+satellite]
+    del aotDataSet['time'+'/'+year+'/'+satellite+resolution+'/'+satellite+resolution]
+
 except:
     print 'without timeSerie'
 
-nppData['time'+'/'+year+'/'+satellite]=allTimeSatelliteArr
-nppData.close()
+#print allTimeSatelliteArr
+
+aotDataSet['time'+'/'+year+'/'+satellite+resolution+'/'+satellite+resolution]=allTimeSatelliteArr
+aotDataSet.close()

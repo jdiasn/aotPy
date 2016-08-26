@@ -1,14 +1,13 @@
-#!/usr/local/bin/python
-
-#from pandas import Series, DataFrame
-#import pandas as pd
-#import glob
 
 import numpy as np
-from aotConf import aeronetPath
 import h5py as h5
-import aotLib
+
 from sys import argv
+import mpi4py as MPI
+
+import aotLib
+from aotConf import aeronetPath
+from aotConf import aotGridded
 
 ############ main code ############
 aotAeroMean=np.array([])
@@ -17,46 +16,45 @@ aotAero550Mean=np.array([])
 aotAero550Std=np.array([])
 newTimeArr=np.array([])
 
-inputAeronetDataPath,outputAeronetDataPath=aeronetPath()
+inputAeronetDataPath, outputAeronetDataPath=aeronetPath()
+pathOut=aotGridded()
 
 year=argv[1]
-
-#get time array from aotDataSet.h5
-#satellite=argv[1]
-#satellite='npp'
 satellite=argv[2]
-#satellite='edrNppNasa'
-#satellite='aqua'
-#satellite='aqua_nasa'
+resolution=argv[3]
+dataLev = argv[4]
 
-dataLev = argv[3]
+#comm = MPI.COMM_WORLD
 
+#size = comm.Get_size()
+#rank = comm.Get_rank()
 
-pathOut=aeronetPath()[1]
 dataPath=pathOut+'/'+'aotDataSet.h5'
 aotData=h5.File(dataPath,'r')
-timeSatelliteArr=np.array(aotData['/time/'+year+'/'+satellite])
+timeSatelliteArr=np.array(aotData['/time/'+year+'/'+satellite+resolution+'/'+satellite+resolution])
 aotData.close()
 device='aeronet'
 
 #get list of aeronet archive
 
 if dataLev == 'lev20':
-	filePathArr=aotLib.getAeronetPathArr(inputAeronetDataPath + '/allDataL2',dataLev)
+	filePathArr=aotLib.getAeronetPathArr(inputAeronetDataPath + '/level20',dataLev)
 
 
 else:
 	dataLev = 'lev15'
-	filePathArr=aotLib.getAeronetPathArr(inputAeronetDataPath + '/allDataL15',dataLev)
+	filePathArr=aotLib.getAeronetPathArr(inputAeronetDataPath + '/level15',dataLev)
 
 
 #print filePathArr
+
 stationNameArr=aotLib.returnAeronetCoordenateArr(filePathArr)[0]
 
+#print stationNameArr
 
 for filePath in range(len(filePathArr)):
 
-	print filePathArr[filePath]
+#	print filePathArr[filePath]
 	table,aotWlenHeader=aotLib.getAeronetDataTable(filePathArr[filePath])	
 
 	table = table[(table.Date_dd_mm_yy_.str.split(':').str[2] == year)]

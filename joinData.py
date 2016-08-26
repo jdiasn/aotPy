@@ -21,13 +21,13 @@ if sensor == 'modis' and int(resolution) == 3:
      
 elif sensor == 'modis' and int(resolution) == 10:
     
-    from aotConf import aotModis3k
-    inputPath, outPutPath = aotModis3k()
+    from aotConf import aotModis
+    inputPath, outPutPath = aotModis()
 
-elif sensor == 'viirs' and int(resolution) == 6:
+#elif sensor == 'viirs' and int(resolution) == 6:
     
-    from aotConf import aotModis3k
-    inputPath, outPutPath = aotModis3k()
+#    from aotConf import aotModis3k
+#    inputPath, outPutPath = aotModis3k()
 
 else: 
     print 'Configuration not found'

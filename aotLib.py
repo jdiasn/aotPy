@@ -1,10 +1,10 @@
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import datetime
 import math
 from pandas import Series, DataFrame
-from matplotlib.patches import Polygon
-from mpl_toolkits.basemap import Basemap
+#from matplotlib.patches import Polygon
+#from mpl_toolkits.basemap import Basemap
 from scipy.optimize import curve_fit
 import glob
 import pandas as pd
@@ -220,8 +220,9 @@ def getRegionIndexMatrixOld(latBegin,latEnd,lat,lonBegin,lonEnd,lon):
     		interLatBeginEnd=getValBetAt2dArr(latBegin,latEnd,lat)
     		#print interLatBeginEnd
 	except:
-		print 'out of latitude'
-		
+		#print 'out of latitude'
+		interLatBeginEnd = None	
+	
     	rowMina,rowMaxa,colMina,colMaxa=getMatrixCorner(interLatBeginEnd)
 
 	if(lonBegin>=lon[rowMaxa][colMaxa] and lonEnd<=lon[rowMina][colMina]):
@@ -234,23 +235,48 @@ def getRegionIndexMatrixOld(latBegin,latEnd,lat,lonBegin,lonEnd,lon):
 		   	interLatLon=np.intersect1d(interLatBeginEnd,interLonBeginEnd)
 
 		except:
-			print 'out of longitude'
-			
+			#print 'out of longitude'
+			interLatLon = None			
+
  		try: 
 		  	rowMin,rowMax,colMin,colMax=getMatrixCorner(interLatLon)
 
 		except:
-			print 'without longitude values'
-		
-	else:
-		print 'out of longitude 2'
+			#print 'without longitude values'
+			rowMin,rowMax,colMin,colMax = None, None, None, None
+
+	#else:
+	#	print 'out of longitude 2'
 	
 	try: 		
     		return rowMin,rowMax,colMin,colMax
 	
 	except:
-		print 'no values'
+		return None 
+		#print 'no values'
 #-----------------------------------------
+
+
+#-----------------------------------------
+#
+#
+def verifyAeronetCoordenates(aeronetLat, aeronetLon, latMatrix, lonMatrix):
+
+	maxLat = np.max(latMatrix)
+	minLat = np.min(latMatrix)
+
+	maxLon = np.max(lonMatrix)
+	minLon = np.min(lonMatrix)
+
+
+	ind =  ((aeronetLat<=maxLat) & (aeronetLat>=minLat) & (aeronetLon<=maxLon) & (aeronetLon>=minLon))
+ 	
+
+	#print maxLat, minLat, maxLon, minLon	
+	return ind
+
+#-----------------------------------------
+
 
 
 #-----------------------------------------
@@ -276,11 +302,12 @@ def getRegionIndexMatrix(latBegin,latEnd,lat,lonBegin,lonEnd,lon):
 		#colMax=ind[1].max()
 		#colMin=ind[1].min()
 
+		return rowMin,rowMax,colMin,colMax
+
 	except:
-		print 'out of lat lon'
+	#	print 'out of lat lon'
 		return None
 	
-	return rowMin,rowMax,colMin,colMax
 
 #-----------------------------------------
 
@@ -661,13 +688,14 @@ def getEdrAotFileList(filePath):
 #this function get a list of npp edr files to 
 #plot aot edr npp from nasa
 #
-def getEdrAotFileListNasa(filePath):
+def getEdrAotFileListNasa(filePath, year, month, day):
 
-    pathGaeroList=[]
-    pathGaero=filePath+'GAERO*.h5'
+    pathGaeroList = []
+    pathGaero =  '/'.join([filePath, 'GAERO*d'+year+month+day+'*.h5']) 
+    #print pathGaero
     pathGaeroList=glob.glob(pathGaero) 
        
-    return len(pathGaeroList),pathGaeroList,pathGaeroList
+    return len(pathGaeroList), pathGaeroList
 #-----------------------------------------
 
 
@@ -679,47 +707,47 @@ def writeDataEdr(pathOut,satellite,nameStation,year,time,aotArr40,latArr40,lonAr
 
         aotOut=h5.File(pathOut+'/'+'aotDataSet.h5')
 
-        for i in range(len(nameStation)):
+        #for i in range(len(nameStation)):
 
-                try:
-                        del aotOut[satellite+'/'+nameStation[i]+'/'+year+'/aot40x40/'+str(time)+'aot40x40']
-                except:
-                        print 'without '+nameStation[i]+' '+str(time)+'aot40x40'
+        try:
+        	del aotOut[satellite+'/'+nameStation+'/'+year+'/aot40x40/'+str(time)+'aot40x40']
+        except:
+                print 'without '+nameStation+' '+str(time)+'aot40x40'
 
-                try:
-                        del aotOut[satellite+'/'+nameStation[i]+'/'+year+'/lat40x40/'+str(time)+'lat40x40']
-                except:
-                        print 'without '+nameStation[i]+' '+str(time)+'lat40x40'
+        try:
+                del aotOut[satellite+'/'+nameStation+'/'+year+'/lat40x40/'+str(time)+'lat40x40']
+        except:
+                print 'without '+nameStation+' '+str(time)+'lat40x40'
 
-                try:
-                        del aotOut[satellite+'/'+nameStation[i]+'/'+year+'/lon40x40/'+str(time)+'lon40x40']
-                except:
-                        print 'without '+nameStation[i]+' '+str(time)+'lon40x40'
+        try:
+                del aotOut[satellite+'/'+nameStation+'/'+year+'/lon40x40/'+str(time)+'lon40x40']
+        except:
+                print 'without '+nameStation+' '+str(time)+'lon40x40'
 
-                try:
-                        del aotOut[satellite+'/'+nameStation[i]+'/'+year+'/aotModel/'+str(time)+'aotModel']
-                except:
-                        print 'without '+nameStation[i]+' '+str(time)+'aotModel'
+        try:
+               del aotOut[satellite+'/'+nameStation+'/'+year+'/aotModel/'+str(time)+'aotModel']
+        except:
+               print 'without '+nameStation+' '+str(time)+'aotModel'
 
-                try:
-                        del aotOut[satellite+'/'+nameStation[i]+'/'+year+'/qFlagMat/'+str(time)+'qFlagMat']
-                except:
-                        print 'without '+nameStation[i]+' '+str(time)+'qFlagMat'
-
-
+        try:
+               del aotOut[satellite+'/'+nameStation+'/'+year+'/qFlagMat/'+str(time)+'qFlagMat']
+        except:
+               print 'without '+nameStation+' '+str(time)+'qFlagMat'
 
 
-		print 'saida -> '+satellite+'/'+nameStation[i]+'/'+year+'/aot40x40/'+str(time)+'aot40x40'
+
+
+	print 'saida -> '+satellite+'/'+nameStation+'/'+year+'/aot40x40/'+str(time)+'aot40x40'
 
 	#	print aotModel[i]  
 	
-                aotOut[satellite+'/'+str(nameStation[i])+'/'+year+'/aot40x40/'+str(time)+'aot40x40']=aotArr40[i]
-                aotOut[satellite+'/'+str(nameStation[i])+'/'+year+'/lat40x40/'+str(time)+'lat40x40']=latArr40[i]
-                aotOut[satellite+'/'+str(nameStation[i])+'/'+year+'/lon40x40/'+str(time)+'lon40x40']=lonArr40[i]
+        aotOut[satellite+'/'+str(nameStation)+'/'+year+'/aot40x40/'+str(time)+'aot40x40']=aotArr40
+        aotOut[satellite+'/'+str(nameStation)+'/'+year+'/lat40x40/'+str(time)+'lat40x40']=latArr40
+        aotOut[satellite+'/'+str(nameStation)+'/'+year+'/lon40x40/'+str(time)+'lon40x40']=lonArr40
 
-		#print aotModel[i]
-                aotOut[satellite+'/'+str(nameStation[i])+'/'+year+'/aotModel/'+str(time)+'aotModel']=aotModel[i]
-		aotOut[satellite+'/'+str(nameStation[i])+'/'+year+'/qFlagMat/'+str(time)+'qFlagMat']=qFlagMat[i]
+	#print aotModel[i]
+        aotOut[satellite+'/'+str(nameStation)+'/'+year+'/aotModel/'+str(time)+'aotModel']=aotModel
+	aotOut[satellite+'/'+str(nameStation)+'/'+year+'/qFlagMat/'+str(time)+'qFlagMat']=qFlagMat
 
 
         aotOut.close()
@@ -740,45 +768,47 @@ def writeData(pathOut,satellite,nameStation,year,time,aotArr40,latArr40,lonArr40
 
         aotOut=h5.File(pathOut+'/'+'aotDataSet.h5')
 
-        for i in range(len(nameStation)):
+       # for i in range(len(nameStation)):
+        try:
+                del aotOut[satellite+'/'+nameStation+'/'+year+'/aot40x40/'+str(time)+'aot40x40']
+        except:
+                print 'without '+nameStation+' '+str(time)+'aot40x40'
 
-                try:
-                        del aotOut[satellite+'/'+nameStation[i]+'/'+year+'/aot40x40/'+str(time)+'aot40x40']
-                except:
-                        print 'without '+nameStation[i]+' '+str(time)+'aot40x40'
+        try:
+                del aotOut[satellite+'/'+nameStation+'/'+year+'/lat40x40/'+str(time)+'lat40x40']
+        except:
+                print 'without '+nameStation+' '+str(time)+'lat40x40'
 
-                try:
-                        del aotOut[satellite+'/'+nameStation[i]+'/'+year+'/lat40x40/'+str(time)+'lat40x40']
-                except:
-                        print 'without '+nameStation[i]+' '+str(time)+'lat40x40'
+        try:
+                del aotOut[satellite+'/'+nameStation+'/'+year+'/lon40x40/'+str(time)+'lon40x40']
+        except:
+                print 'without '+nameStation+' '+str(time)+'lon40x40'
 
-                try:
-                        del aotOut[satellite+'/'+nameStation[i]+'/'+year+'/lon40x40/'+str(time)+'lon40x40']
-                except:
-                        print 'without '+nameStation[i]+' '+str(time)+'lon40x40'
-
-		print 'saida -> '+satellite+'/'+nameStation[i]+'/'+year+'/aot40x40/'+str(time)+'aot40x40'
-#		print aotArr40[i] 
-                aotOut[satellite+'/'+str(nameStation[i])+'/'+year+'/aot40x40/'+str(time)+'aot40x40']=aotArr40[i]
-                aotOut[satellite+'/'+str(nameStation[i])+'/'+year+'/lat40x40/'+str(time)+'lat40x40']=latArr40[i]
-                aotOut[satellite+'/'+str(nameStation[i])+'/'+year+'/lon40x40/'+str(time)+'lon40x40']=lonArr40[i]
+        print 'out -> '+satellite+'/'+nameStation+'/'+year+'/aot40x40/'+str(time)+'aot40x40'
+#               print aotArr40[i] 
+        aotOut[satellite+'/'+str(nameStation)+'/'+year+'/aot40x40/'+str(time)+'aot40x40']=aotArr40
+        aotOut[satellite+'/'+str(nameStation)+'/'+year+'/lat40x40/'+str(time)+'lat40x40']=latArr40
+        aotOut[satellite+'/'+str(nameStation)+'/'+year+'/lon40x40/'+str(time)+'lon40x40']=lonArr40
 
 
         aotOut.close()
+
 #--------------------------------------
 
 
-def writeDataTime(pathOut,year,timeArr,satellite,process):
+def writeDataTime(pathOut,year,timeArr,satellite,month):
 
         aotOut=h5.File(pathOut+'/'+'aotDataSet.h5')
 
         try:
-                del aotOut['time'+'/'+year+'/'+satellite+process]
+                del aotOut['time'+'/'+year+'/'+satellite+'/'+satellite+month]
         except:
                 print 'without timeSerie'
 
-        aotOut['time'+'/'+year+'/'+satellite+process]=timeArr
+	print 'out -> time'+'/'+year+'/'+satellite+'/'+satellite+month
+        aotOut['time'+'/'+year+'/'+satellite+'/'+satellite+month]=timeArr
 
         aotOut.close()
 
 
+                 
