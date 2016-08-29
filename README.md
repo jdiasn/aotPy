@@ -5,6 +5,6 @@ This is a parallel version, and is development yet.
 
 The procedure to create AOD mensal average is working.
 
-The file masterControlExample.sh is used to control the extraction.
+The file masterControlExample.sh is used to control the data extraction.
 
 
