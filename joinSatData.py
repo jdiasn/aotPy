@@ -78,8 +78,8 @@ for filePath in filesPathList:
 
         latPath = '_'.join(variables[0:-1])+'_'+'latArr40.p'
         lonPath = '_'.join(variables[0:-1])+'_'+'lonArr40.p'
-        modPath = '_'.join(variables[0:-1])+'_'+'latArr40.p'
-        flgPath = '_'.join(variables[0:-1])+'_'+'lonArr40.p'
+        modPath = '_'.join(variables[0:-1])+'_'+'aotModel.p'
+        flgPath = '_'.join(variables[0:-1])+'_'+'qFlagMat.p'
 
    	aotArr40 = pickle.load(open(filePath, 'rb'))
 	latArr40 = pickle.load(open(path+'/'+latPath, 'rb'))

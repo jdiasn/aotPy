@@ -737,7 +737,7 @@ def writeDataEdr(pathOut,satellite,nameStation,year,time,aotArr40,latArr40,lonAr
 
 
 
-	print 'saida -> '+satellite+'/'+nameStation+'/'+year+'/aot40x40/'+str(time)+'aot40x40'
+	#print 'saida -> '+satellite+'/'+nameStation+'/'+year+'/aot40x40/'+str(time)+'aot40x40'
 
 	#	print aotModel[i]  
 	
@@ -784,7 +784,7 @@ def writeData(pathOut,satellite,nameStation,year,time,aotArr40,latArr40,lonArr40
         except:
                 print 'without '+nameStation+' '+str(time)+'lon40x40'
 
-        print 'out -> '+satellite+'/'+nameStation+'/'+year+'/aot40x40/'+str(time)+'aot40x40'
+        #print 'out -> '+satellite+'/'+nameStation+'/'+year+'/aot40x40/'+str(time)+'aot40x40'
 #               print aotArr40[i] 
         aotOut[satellite+'/'+str(nameStation)+'/'+year+'/aot40x40/'+str(time)+'aot40x40']=aotArr40
         aotOut[satellite+'/'+str(nameStation)+'/'+year+'/lat40x40/'+str(time)+'lat40x40']=latArr40
@@ -805,7 +805,7 @@ def writeDataTime(pathOut,year,timeArr,satellite,month):
         except:
                 print 'without timeSerie'
 
-	print 'out -> time'+'/'+year+'/'+satellite+'/'+satellite+month
+	#print 'out -> time'+'/'+year+'/'+satellite+'/'+satellite+month
         aotOut['time'+'/'+year+'/'+satellite+'/'+satellite+month]=timeArr
 
         aotOut.close()
