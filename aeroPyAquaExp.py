@@ -29,6 +29,11 @@ if sensor == 'modis' and resolution == '3km':
     from aotConf import aotModis3k
     inputSatPath, outputSatPath = aotModis3k()
 
+elif sensor == 'modis' and resolution == '10kmC51':
+
+    from aotConf import aotModisC51
+    inputSatPath, outputSatPath = aotModisC51()
+
 else: 
 
     from aotConf import aotModis
@@ -65,7 +70,7 @@ def aotProcess(filePath,aotFile,julianDay,aeronetLat,aeronetLon):
 		aeroOptDep=np.array(aerosolFile['/Optical_Depth_Land_And_Ocean'])
 
 	except:
-		aeroOptDep=np.array(aerosolFile['/mod04/Data Fields/Optical_Depth_Land_And_Ocean'])
+		aeroOptDep=np.array(aerosolFile['/mod04/Data Fields/AOD_550_Dark_Target_Deep_Blue_Combined'])
 
 	aeroOptDep=np.ma.masked_where(aeroOptDep<0,aeroOptDep)
 
@@ -76,6 +81,12 @@ def aotProcess(filePath,aotFile,julianDay,aeronetLat,aeronetLon):
 	except:
 		lat=np.array(aerosolFile['/mod04/Geolocation Fields/Latitude'])	
 		lon=np.array(aerosolFile['/mod04/Geolocation Fields/Longitude'])
+
+	try:
+		qualFlag = np.array(aerosolFile['/Land_Ocean_Quality_Flag'])
+
+	except:
+		qualFlag = np.array(aerosolFile['/mod04/Data Fields/AOD_550_Dark_Target_Deep_Blue_Combined_QA_Flag'])
 
 	aerosolFile.close()	
 
@@ -109,7 +120,7 @@ def aotProcess(filePath,aotFile,julianDay,aeronetLat,aeronetLon):
 	        #aeronet= -10.0,-54.5
         	#aeronet=-15.729500,-56.021000
 	        earthRay= 6371 ## km
-	        length= 40 ## km
+	        length= 50 ## km
 
 	        beginLatReg,endLatReg,beginLonReg,endLonReg=aotLib.getComparisonRegion(aeronetLat,aeronetLon,length,earthRay)
 	        rowMin,rowMax,colMin,colMax=aotLib.getRegionIndexMatrix(beginLatReg,endLatReg,lat,beginLonReg,endLonReg,lon)
@@ -117,14 +128,15 @@ def aotProcess(filePath,aotFile,julianDay,aeronetLat,aeronetLon):
         	aeroOptDep=aotLib.getNewMatrix(rowMin,rowMax,colMin,colMax,aeroOptDep)
 	        lat=aotLib.getNewMatrix(rowMin,rowMax,colMin,colMax,lat)
 		lon=aotLib.getNewMatrix(rowMin,rowMax,colMin,colMax,lon)
+		qualFlag=aotLib.getNewMatrix(rowMin,rowMax,colMin,colMax,qualFlag)
 
 		#print aeroOptDep.mean()
+		#print qualFlag.shape == aeroOptDep.shape
 
-
-		return aeroOptDep.mean(), aeroOptDep.std(), aeroOptDep, lat, lon
+		return aeroOptDep.mean(), aeroOptDep.std(), aeroOptDep, lat, lon, qualFlag
 
 	else:
-		return None, None, None, None, None
+		return None, None, None, None, None, None
 
 	
 
@@ -190,6 +202,7 @@ aotStdList=[]
 aotArr40=[]
 latArr40=[]
 lonArr40=[]
+qFlagMat=[]
 nameStationAux=[]
 #--------------------------------------
 
@@ -234,7 +247,7 @@ for aotFilePath in aotFileList:
 #		print nameStationArr[nameStation]
 
 		try:
-			aotMean,aotStd,aotMatrix,latMatrix,lonMatrix=aotProcess(filePath,aotFilePath,\
+			aotMean,aotStd,aotMatrix,latMatrix,lonMatrix,flagMatrix=aotProcess(filePath,aotFilePath,\
 str(time),aeronetLatArr[nameStation],aeronetLonArr[nameStation])
 			
 				
@@ -242,9 +255,10 @@ str(time),aeronetLatArr[nameStation],aeronetLonArr[nameStation])
 
 			if aotMean >=0:
 				nameStationAux=nameStationAux+[nameStationArr[nameStation]]
-				aotArr40=aotArr40+[aotMatrix]
-				latArr40=latArr40+[latMatrix]
-				lonArr40=lonArr40+[lonMatrix]
+				aotArr40 = aotArr40 + [aotMatrix]
+				latArr40 = latArr40 + [latMatrix]
+				lonArr40 = lonArr40 + [lonMatrix]
+				qFlagMat = qFlagMat + [flagMatrix]
 
 			else:
 				pass
@@ -271,6 +285,10 @@ str(time),aeronetLatArr[nameStation],aeronetLonArr[nameStation])
 		tempFile = tempOutputPath+'/tempData_'+sensor+'_'+resolution+'_'+nameStationAux[station]+'_'+year+'_'+str(time)+'_lonArr40.p'
 		pickle.dump(lonArr40[station], open(tempFile, 'wb'))
 
+		tempFile = tempOutputPath+'/tempData_'+sensor+'_'+resolution+'_'+nameStationAux[station]+'_'+year+'_'+str(time)+'_qFlagMat.p'
+		pickle.dump(qFlagMat[station], open(tempFile, 'wb'))
+		#print tempFile
+
 	timeArr=np.append(timeArr,time)
 
 #--------------------------------------
@@ -295,6 +313,7 @@ str(time),aeronetLatArr[nameStation],aeronetLonArr[nameStation])
         aotArr40=[]
         latArr40=[]
         lonArr40=[]
+	qFlagMat=[]
         nameStationAux=[]
 
 

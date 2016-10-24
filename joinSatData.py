@@ -24,6 +24,11 @@ elif sensor == 'modis' and resolution == '10km':
     from aotConf import aotModis
     inputPath, outPutPath = aotModis()
 
+elif sensor == 'modis' and resolution == '10kmC51':
+
+    from aotConf import aotModis
+    inputPath, outPutPath = aotModisC51()
+
 elif sensor == 'viirs' and resolution == 'edr':
 
     from aotConf import edrNppNasaPath
@@ -67,12 +72,15 @@ for filePath in filesPathList:
 
         latPath = '_'.join(variables[0:-1])+'_'+'latArr40.p'
         lonPath = '_'.join(variables[0:-1])+'_'+'lonArr40.p'
+	flgPath = '_'.join(variables[0:-1])+'_'+'qFlagMat.p'
  
    	aotArr40 = pickle.load(open(filePath, 'rb'))
 	latArr40 = pickle.load(open(path+'/'+latPath, 'rb'))
     	lonArr40 = pickle.load(open(path+'/'+lonPath, 'rb'))
+	qFlagMat = pickle.load(open(path+'/'+flgPath, 'rb'))
        
-    	aotLib.writeData(griddedDataPath,satellite + resolution,nameStation,year,time,aotArr40,latArr40,lonArr40)
+    	aotLib.writeData(griddedDataPath, satellite + resolution, nameStation,
+			 year, time, aotArr40, latArr40, lonArr40, qFlagMat)
 
     if sensor == 'viirs':
 
@@ -87,7 +95,9 @@ for filePath in filesPathList:
 	aotModel = pickle.load(open(path+'/'+modPath, 'rb'))
     	qFlagMat = pickle.load(open(path+'/'+flgPath, 'rb'))
 
-        aotLib.writeDataEdr(griddedDataPath,satellite + resolution,nameStation,year,time,aotArr40,latArr40,lonArr40,aotModel,qFlagMat)
+        aotLib.writeDataEdr(griddedDataPath, satellite + resolution, nameStation,
+			    year, time, aotArr40, latArr40, lonArr40, aotModel,
+			    qFlagMat)
        
 for filePath in timeFilePath:
 

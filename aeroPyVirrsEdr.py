@@ -39,7 +39,7 @@ def aotProcess(filePath,gaeroFile,vaoooFile,julianDay,aeronetLat,aeronetLon):
         #aeronet= -10.0,-54.5
         #aeronet=-15.729500,-56.021000
         earthRay= 6371 ## km
-        length= 40 ## km
+        length= 50 ## km
 
         beginLatReg,endLatReg,beginLonReg,endLonReg=aotLib.getComparisonRegion(aeronetLat,aeronetLon,length,earthRay)
         rowMin,rowMax,colMin,colMax=aotLib.getRegionIndexMatrix(beginLatReg,endLatReg,lat,beginLonReg,endLonReg,lon)

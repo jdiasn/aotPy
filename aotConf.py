@@ -59,6 +59,13 @@ def aotModis():
 
         return inputNppDataPath, outputNppDataPath
 
+def aotModisC51():
+
+        inputNppDataPath = inputDataPath + '/modis/10kmC51' 
+        outputNppDataPath = outputDataPath + '/modis/10kmC51'
+
+        return inputNppDataPath, outputNppDataPath
+
 
 def aeronetPath():
 

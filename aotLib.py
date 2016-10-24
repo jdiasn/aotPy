@@ -764,7 +764,7 @@ def writeDataEdr(pathOut,satellite,nameStation,year,time,aotArr40,latArr40,lonAr
 #------------------------------------------
 # write file .h5 file
 #
-def writeData(pathOut,satellite,nameStation,year,time,aotArr40,latArr40,lonArr40):
+def writeData(pathOut,satellite,nameStation,year,time,aotArr40,latArr40,lonArr40,qFlagMat):
 
         aotOut=h5.File(pathOut+'/'+'aotDataSet.h5')
 
@@ -784,11 +784,19 @@ def writeData(pathOut,satellite,nameStation,year,time,aotArr40,latArr40,lonArr40
         except:
                 print 'without '+nameStation+' '+str(time)+'lon40x40'
 
+        try:
+               del aotOut[satellite+'/'+nameStation+'/'+year+'/qFlagMat/'+str(time)+'qFlagMat']
+        except:
+               print 'without '+nameStation+' '+str(time)+'qFlagMat'
+
+
+
         #print 'out -> '+satellite+'/'+nameStation+'/'+year+'/aot40x40/'+str(time)+'aot40x40'
 #               print aotArr40[i] 
         aotOut[satellite+'/'+str(nameStation)+'/'+year+'/aot40x40/'+str(time)+'aot40x40']=aotArr40
         aotOut[satellite+'/'+str(nameStation)+'/'+year+'/lat40x40/'+str(time)+'lat40x40']=latArr40
         aotOut[satellite+'/'+str(nameStation)+'/'+year+'/lon40x40/'+str(time)+'lon40x40']=lonArr40
+	aotOut[satellite+'/'+str(nameStation)+'/'+year+'/qFlagMat/'+str(time)+'qFlagMat']=qFlagMat
 
 
         aotOut.close()
