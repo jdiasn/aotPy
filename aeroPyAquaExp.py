@@ -70,7 +70,7 @@ def aotProcess(filePath,aotFile,julianDay,aeronetLat,aeronetLon):
 		aeroOptDep=np.array(aerosolFile['/Optical_Depth_Land_And_Ocean'])
 
 	except:
-		aeroOptDep=np.array(aerosolFile['/mod04/Data Fields/AOD_550_Dark_Target_Deep_Blue_Combined'])
+		aeroOptDep=np.array(aerosolFile['/mod04/Data Fields/Optical_Depth_Land_And_Ocean'])
 
 	aeroOptDep=np.ma.masked_where(aeroOptDep<0,aeroOptDep)
 
@@ -86,7 +86,7 @@ def aotProcess(filePath,aotFile,julianDay,aeronetLat,aeronetLon):
 		qualFlag = np.array(aerosolFile['/Land_Ocean_Quality_Flag'])
 
 	except:
-		qualFlag = np.array(aerosolFile['/mod04/Data Fields/AOD_550_Dark_Target_Deep_Blue_Combined_QA_Flag'])
+		qualFlag = np.array(aerosolFile['/mod04/Data Fields/Land_Ocean_Quality_Flag'])
 
 	aerosolFile.close()	
 
